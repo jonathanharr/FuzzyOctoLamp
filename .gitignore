@@ -1,0 +1,13 @@
+﻿/Jonathan.Harr.FuzzyOctoLamp.Tests/obj/
+/Jonathan.Harr.FuzzyOctoLamp.Tests/bin/
+/Jonathan.Harr.FuzzyOctoLamp/obj/
+/Jonathan.Harr.FuzzyOctoLamp/bin/### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
+obj
+bin
