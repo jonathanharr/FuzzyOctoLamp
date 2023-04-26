@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jonathan.Harr.FuzzyOctoLamp.Tests", "Jonathan.Harr.FuzzyOctoLamp.Tests\Jonathan.Harr.FuzzyOctoLamp.Tests.csproj", "{A2BA301A-69E0-4D82-88B7-6F44750D83FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jonathan.Harr.FuzzyOctoLamp", "Jonathan.Harr.FuzzyOctoLamp\Jonathan.Harr.FuzzyOctoLamp.csproj", "{16DED3CE-F973-4680-B4B5-04A9DC24CD61}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2BA301A-69E0-4D82-88B7-6F44750D83FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2BA301A-69E0-4D82-88B7-6F44750D83FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2BA301A-69E0-4D82-88B7-6F44750D83FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2BA301A-69E0-4D82-88B7-6F44750D83FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16DED3CE-F973-4680-B4B5-04A9DC24CD61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16DED3CE-F973-4680-B4B5-04A9DC24CD61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16DED3CE-F973-4680-B4B5-04A9DC24CD61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16DED3CE-F973-4680-B4B5-04A9DC24CD61}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

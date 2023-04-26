@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Jonathan.Harr.FuzzyOctoLamp": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7172",
+      "launchBrowser": false
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+        "HueConfig__ApiUser": "JkKLL75ApxQmtbqZdt79BeSYKE-519yZ7159q1Sk",
+        "HueConfig__LightId": "10",
+        "HueConfig__AccessToken": "E1dkaQ17XNLIf774e0aSESNYC5A4"
+    }
+}
