@@ -1,0 +1,108 @@
+pool:
+  vmImage: ubuntu-latest
+
+variables: 
+  # Variable Group from within DevOps project -> Library
+  - group: HueConfig
+
+  - name: ForefrontLabsSubscription
+    value: "Forefront Labs"
+  
+  # The name of the resource group to deploy the application to without environment suffix. Ex graph-customer or solution-feeadjustments
+  # The deployment template will add the correct suffix.
+  - name: ResourceGroupName
+    value: fuzzy-octo-lamp_group
+
+  # The name of the application without environment suffix. Ex riksbyggen-graph-customer
+  # The deployment template will add the correct suffix.
+  - name: FunctionAppName
+    value: fuzzy-octo-lamp
+
+  - name: xChromaticity
+    value: '0.3223'
+
+  - name: yChromaticity
+    value: '0.3287'
+
+stages:
+    - stage: "Build_Stage"
+      displayName: "Build"
+      jobs:
+        - job: "Build_Job"
+          displayName: "Application Build"
+          steps:
+      
+          - task: DotNetCoreCLI@2
+            displayName: Restore
+            inputs:
+              command: restore
+              projects: '**/*.csproj'
+  
+          - task: DotNetCoreCLI@2
+            displayName: Build
+            inputs:
+              projects: '**/*.csproj'
+              arguments: '-c Release --no-restore'
+  
+          - task: DotNetCoreCLI@2
+            displayName: Publish
+            inputs:
+              command: publish
+              projects: 'Jonathan.Harr.FuzzyOctoLamp/Jonathan.Harr.FuzzyOctoLamp.csproj'
+              publishWebProjects: False
+              arguments: '--output $(build.artifactstagingdirectory) -c Release'
+              zipAfterPublish: True
+  
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact'
+            inputs:
+              PathtoPublish: '$(build.artifactstagingdirectory)'
+              ArtifactName: application
+
+        - job: "Deploy_Dev"
+          displayName: "Deploy to Dev"
+          dependsOn: "Build_Job"
+          steps:
+
+            - download: current
+              displayName: "Download artifact"
+              artifact: application
+
+            - task: AzureRMWebAppDeployment@4
+              displayName: "Deploy application code"
+              inputs:
+                appType: FunctionApp
+                azureSubscription: $(ForefrontLabsSubscription)
+                WebAppName: $(FunctionAppName)
+                Package: '$(Pipeline.Workspace)/application/Jonathan.Harr.FuzzyOctoLamp.zip' # Verify package to deploy
+                deploymentMethod: runFromPackage
+                ResourceGroupName: $(ResourceGroupName)
+                SlotName: $(slotName)
+                AppSettings: -HueConfig__ApiUser $(api-user) -HueConfig__LightId $(light-id) -HueConfig__AccessToken $(access-token)
+
+        - job: "Run_Tests"
+          displayName: "Run tests in Dev"
+          dependsOn: "Deploy_Dev"
+          steps:
+
+            - task: PowerShell@2
+              displayName: 'When I light my lamp'
+              inputs:
+                filePath: '$(System.DefaultWorkingDirectory)/scripts/send_xy_to_fuzzyoctolamp.ps1'
+                arguments: '-XValue $(xChromaticity) -YValue $(yChromaticity)'
+            
+            - task: PowerShell@2
+              displayName: 'Then let there be light!'
+              inputs:
+                targetType: 'inline'
+                script: |
+                  $result = & "$(System.DefaultWorkingDirectory)/scripts/fetch-current-light-color.ps1" -AccessToken $(access-token) -ApiUser $(api-user) -LightId $(light-id)
+                  if ($result.X -eq $(xChromaticity) -and $result.Y -eq $(yChromaticity)) {
+                    Write-Host "The XY values match the expected values: X = $(xChromaticity), Y = $(yChromaticity)"
+                  } else {
+                    Write-Host "The XY values do not match the expected values."
+                    Write-Host "Expected: X = $(xChromaticity), Y = $(yChromaticity)"
+                    Write-Host "Actual: X = $($result.X), Y = $($result.Y)"
+                    exit 1
+                  }
+                errorActionPreference: 'stop'
