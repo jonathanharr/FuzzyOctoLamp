@@ -1,0 +1,52 @@
+parameters:
+  - name: XChromaticity
+    displayName: "Set the X value"
+    type: string
+    default: '0.5'
+
+  - name: YChromaticity
+    displayName: "Set the Y value"
+    type: string
+    default: '0.72'
+
+trigger:
+  branches:
+    include:
+    - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # Variable Group from within DevOps project -> Library
+  - group: HueConfig
+
+jobs:
+- job: check_hue_light_color
+  displayName: 'Check Hue Light Color'
+  steps:
+
+  - task: PowerShell@2
+    displayName: 'Set light to given XY values'
+    inputs:
+      filePath: '$(System.DefaultWorkingDirectory)/scripts/set-light-xy.ps1'
+      arguments: '-AccessToken $(access-token) -ApiUser $(api-user) -LightId $(light-id) -XValue ${{ parameters.XChromaticity }} -YValue ${{ parameters.YChromaticity }}'
+      errorActionPreference: 'stop'
+      
+  - task: PowerShell@2
+    displayName: 'Let us make sure the light is set to the correct XY values'
+    inputs:
+      targetType: 'inline'
+      script: |
+        $result = & "$(System.DefaultWorkingDirectory)/scripts/fetch-current-light-color.ps1" -AccessToken $(access-token) -ApiUser $(api-user) -LightId $(light-id)
+        $expectedX = ${{ parameters.XChromaticity }}
+        $expectedY = ${{ parameters.YChromaticity }}
+        if ($result.X -eq $expectedX -and $result.Y -eq $expectedY) {
+          Write-Host "The XY values match the expected values: X = $expectedX, Y = $expectedY"
+        } else {
+          Write-Host "The XY values do not match the expected values."
+          Write-Host "Expected: X = $expectedX, Y = $expectedY"
+          Write-Host "Actual: X = $($result.X), Y = $($result.Y)"
+          exit 1
+        }
+      errorActionPreference: 'stop'
